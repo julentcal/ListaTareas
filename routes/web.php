@@ -9,3 +9,5 @@ Route::post('/tasks', [TaskController::class, 'store']);
 Route::patch('/tasks/{task}/toggle', [TaskController::class, 'toggle'])->name('tasks.toggle');
 Route::delete('/tasks/{id}', [TaskController::class, 'destroy']);
 Route::put('/tasks/{id}', [TaskController::class, 'update']);
+// Ruta para mostrar el formulario de edición
+Route::get('/tasks/{id}/edit', [TaskController::class, 'edit']);

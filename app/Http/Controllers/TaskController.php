@@ -20,7 +20,12 @@ class TaskController extends Controller
         // 'required': no puede estar vacío.
         // 'min:3': debe tener al menos 3 letras.
         $request->validate([
+            // Reglas
             'name' => 'required|min:3'
+        ], [
+            // Traducciones
+            'name.required' => 'Por favor, escribe un nombre para la tarea.',
+            'name.min'      => 'La tarea debe tener al menos 3 letras.'
         ]);
 
         // Si la validación falla, Laravel se detiene aquí y te devuelve atrás automáticamente.
@@ -45,19 +50,29 @@ class TaskController extends Controller
         return redirect('/');
     }
 
-    public function update($id)
+    public function update(Request $request, $id)
     {
         $task = Task::find($id);
 
-        // 👇 LA MAGIA: Invertimos el valor.
-        // Si es false, se vuelve true. Si es true, se vuelve false.
-        $task->is_completed = ! $task->is_completed;
-        
+        // Si el formulario envió un 'name', actualizamos el texto
+        if ($request->has('name')) {
+            $request->validate(['name' => 'required|min:3']);
+            $task->name = $request->name;
+        } 
+        // Si NO envió nombre, asumimos que queremos cambiar el estado (completar)
+        else {
+            $task->is_completed = ! $task->is_completed;
+        }
+
         $task->save();
 
         return redirect('/');
-
-
     }
 
+
+    public function edit ($id)
+    {
+        $task = Task::find($id);
+        return view('edit', ['task' => $task]);
+    }
 }
